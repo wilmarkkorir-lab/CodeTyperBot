@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Code Typer</title>
+<title>project - Visual Studio Code</title>
 <style>
-:root{--title:#3c3c3c;--act:#333;--side:#252526;--editor:#1e1e1e;--tabon:#1e1e1e;--taboff:#2d2d2d;--text:#d4d4d4;--dim:#858585;--line:#3a3a3a;--status:#007acc;--sel:#37373d;--menu:#303031;
---kw:#569cd6;--str:#ce9178;--com:#6a9955;--num:#b5cea8;--fn:#dcdcaa;--ty:#4ec9b0;--dec:#c586c0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--title)}
-:root[data-theme="light"]{--title:#ddd;--act:#2c2c2c;--side:#f3f3f3;--editor:#fff;--tabon:#fff;--taboff:#ececec;--text:#1f1f1f;--dim:#6e6e6e;--line:#d8d8d8;--sel:#e4e6f1;--menu:#fff;
---kw:#00f;--str:#a31515;--com:#008000;--num:#098658;--fn:#795e26;--ty:#267f99;--dec:#af00db;color-scheme:light}
+:root{--title:#3c3c3c;--act:#333;--side:#252526;--editor:#1e1e1e;--tabon:#1e1e1e;--taboff:#2d2d2d;--text:#d4d4d4;--dim:#858585;--line:#3a3a3a;--status:#007acc;--sel:#37373d;--menu:#303031;--kw:#569cd6;--str:#ce9178;--com:#6a9955;--num:#b5cea8;--fn:#dcdcaa;--ty:#4ec9b0;--dec:#c586c0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--title)}
+:root[data-theme="light"]{--title:#ddd;--act:#2c2c2c;--side:#f3f3f3;--editor:#fff;--tabon:#fff;--taboff:#ececec;--text:#1f1f1f;--dim:#6e6e6e;--line:#d8d8d8;--sel:#e4e6f1;--menu:#fff;--kw:#00f;--str:#a31515;--com:#008000;--num:#098658;--fn:#795e26;--ty:#267f99;--dec:#af00db;color-scheme:light}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--editor);color:var(--text);font:13px/1.4 -apple-system,"Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
@@ -58,6 +56,7 @@ button:focus-visible,input:focus-visible,.ml:focus-visible{outline:1px solid var
 #mini i{display:block;height:2px;margin-bottom:3px;background:var(--dim);border-radius:1px}
 .k{color:var(--kw)}.s{color:var(--str)}.c{color:var(--com);font-style:italic}.n{color:var(--num)}.f{color:var(--fn)}.t{color:var(--ty)}.d{color:var(--dec)}
 .cursor{display:inline-block;width:2px;height:17px;background:var(--text);vertical-align:text-bottom;margin-left:1px;animation:b 1s steps(1) infinite}
+.typo{color:#f48771;text-decoration:wavy underline #f48771}
 @keyframes b{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none}}
 #panel{display:none;height:210px;flex:none;border-top:1px solid var(--line);flex-direction:column;background:var(--editor)}
@@ -69,9 +68,11 @@ button:focus-visible,input:focus-visible,.ml:focus-visible{outline:1px solid var
 .pp{display:none}.pp.on{display:block}
 .tl{display:flex;gap:8px}.tl input{flex:1;background:none;border:0;color:var(--text);font:inherit;outline:0}
 .pr{color:var(--num)}
-.status{background:var(--status);color:#fff;display:flex;gap:14px;padding:0 10px;height:22px;align-items:center;font-size:12px;flex:none;white-space:nowrap;overflow:hidden}
+.status{background:#007acc;color:#fff;display:flex;gap:14px;padding:0 10px;height:22px;align-items:center;font-size:12px;flex:none;white-space:nowrap;overflow:hidden}
 .status .r{margin-left:auto;display:flex;gap:14px;align-items:center}
 .status button{padding:0 4px;height:22px}.status button:hover{background:rgba(255,255,255,.2)}
+.sync{color:#4fc1ff;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
 #pal{display:none;position:fixed;inset:0;z-index:60;justify-content:center;align-items:flex-start;padding-top:44px}
 #pbox{width:min(560px,92vw);background:var(--menu);border:1px solid var(--line);border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.5);overflow:hidden}
 #pin{width:100%;background:var(--editor);color:var(--text);border:1px solid var(--status);margin:6px;width:calc(100% - 12px);padding:6px 8px;font:inherit}
@@ -87,7 +88,7 @@ button:focus-visible,input:focus-visible,.ml:focus-visible{outline:1px solid var
   <div class="dots"><i></i><i></i><i></i></div>
   <button id="burger" aria-label="Command palette">&#8801;</button>
   <div id="menu"></div>
-  <div id="winname">Visual Studio Code</div>
+  <div id="winname">project - Visual Studio Code</div>
 </div>
 <div class="main">
   <div class="activity" id="act">
@@ -126,6 +127,7 @@ button:focus-visible,input:focus-visible,.ml:focus-visible{outline:1px solid var
     <button id="lang" title="Switch language"></button>
     <button id="tbtn" title="Toggle terminal">Terminal</button>
     <button id="pause">Pause</button>
+    <span class="sync hide-m" id="sync" style="display:none">&#x1F504; Syncing with origin...</span>
     <label class="hide-m" style="display:flex;align-items:center;gap:6px">Speed <input id="speed" type="range" min="1" max="10" value="5"></label>
   </div>
 </div>
@@ -149,7 +151,6 @@ class Worker:
         self.sem = asyncio.Semaphore(limit)
 
     async def run(self):
-        # pull jobs forever and retry failures
         while True:
             job = await self.queue.get()
             async with self.sem:
@@ -222,7 +223,6 @@ export async function fetchJSON(url, retries = 3) {
       if (!res.ok) throw new Error(res.statusText);
       return await res.json();
     } catch (err) {
-      // back off before the next try
       if (attempt === retries - 1) throw err;
       await new Promise(r => setTimeout(r, 2 ** attempt * 200));
     }
@@ -258,15 +258,14 @@ const store = {
 const KW={py:'import|from|def|class|return|if|else|elif|while|for|in|try|except|async|await|with|as|not|and|or|None|True|False|self|continue|pass|print',
 js:'export|class|const|let|var|function|return|if|else|for|while|try|catch|throw|new|await|async|this|of|in|undefined|true|false'};
 const FILES=[{n:'main.py',l:'py'},{n:'worker.py',l:'py'},{n:'utils.py',l:'py'},{n:'index.js',l:'js'},{n:'cache.js',l:'js'},
-{n:'config.json',l:'txt',s:'{\n  "name": "project",\n  "version": "1.0.0",\n  "main": "index.js",\n  "scripts": {\n    "start": "node index.js"\n  }\n}\n'},
-{n:'README.md',l:'txt',s:'# project\n\nA small demo project.\n\n## Run\n\n    python main.py\n    node index.js\n'}];
-FILES.forEach(f=>{f.text=f.s||'';f.queue='';f.off=0;f.typing=!f.s});
-let open=[0,1],active=0,paused=false,boost=0,hold=0,minimap=true,panelTab='term',palSel=0,palItems=[],busy=false,untitled=1;
+{n:'config.json',l:'txt',s:'{\n  "name": "project",\n  "version": "1.0.0",\n  "main": "index.js",\n  "scripts": {\n    "start": "node index.js"\n  }\n}'},{n:'README.md',l:'txt',s:'# project\n\nA small demo project.\n\n## Run\n\n    python main.py\n    node index.js\n'}];
+FILES.forEach(f=>{f.text=f.s||'';f.queue='';f.off=0;f.typing=!f.s;f.dirty=false});
+let open=[0,1],active=0,paused=false,boost=0,hold=0,minimap=true,panelTab='term',palSel=0,palItems=[],busy=false,untitled=1,pushing=false,dirtyCount=0;
 const cur=()=>FILES[active];
 const PROMPT='dev@laptop:~/project$';
 $('prm').textContent=PROMPT;
 
-function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2200)}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3000)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function highlight(src,mode){
   if(mode==='txt')return esc(src);
@@ -279,7 +278,9 @@ function highlight(src,mode){
 }
 const langName=f=>f.l==='py'?'Python':f.l==='js'?'JavaScript':f.n.endsWith('.json')?'JSON':'Markdown';
 
-/* ---------- editor ---------- */
+function setDirty(d){dirtyCount=d?dirtyCount+1:Math.max(0,dirtyCount-1);const st=document.querySelector('.status');if(st){const sp=st.children[1];if(sp)sp.textContent='&#10005; '+dirtyCount+' &#9888; 0';}}
+function setPushing(p){pushing=p;$('sync').style.display=p?'inline':'none';if(p)toast('Syncing with origin/main');else toast('Synced with origin/main');}
+
 function render(){
   const f=cur();const none=!f||!open.includes(active);
   $('scroll').style.display=none?'none':'flex';$('empty').style.display=none?'flex':'none';
@@ -305,64 +306,40 @@ function chrome(){
   $('lang').textContent=ok?langName(f):'';
   if(view==='explorer')drawSide();
 }
-function prefill(f){if(f.typing&&!f.text){f.text=SN[f.l][Math.floor(Math.random()*2)].split('\n').slice(0,8).join('\n')+'\n'}}
+function prefill(f){if(f.typing&&!f.text){f.text=SN[f.l][Math.floor(Math.random()*2)].split('\n').slice(0,8).join('\n')+'\n';f.dirty=true;setDirty(true)}}
 function activate(id){active=id;if(!open.includes(id))open.push(id);prefill(FILES[id]);queueMicrotask(()=>{});chrome();render()}
 function openFile(i){activate(i)}
 function closeTab(id){const i=open.indexOf(id);open.splice(i,1);if(active===id)active=open.length?open[Math.min(i,open.length-1)]:-1;chrome();render()}
-function newFile(){const n='untitled-'+(untitled++)+'.py';FILES.push({n,l:'py',text:'',queue:'',off:0,typing:true});activate(FILES.length-1)}
-function tick(){
-  const f=cur();
-  if(f&&f.typing&&open.includes(active)&&!paused&&Date.now()>hold){
-    if(!f.queue)f.queue=SN[f.l][Math.floor(Math.random()*SN[f.l].length)]+'\n';
-    const n=Math.ceil(Math.random()*$('speed').value*0.6)+boost;
-    f.text+=f.queue.slice(0,n);f.queue=f.queue.slice(n);
-    const ls=f.text.split('\n');
-    if(ls.length>120){const d=ls.length-90;f.off+=d;f.text=ls.slice(d).join('\n')}
-    render();
-  }
-  setTimeout(tick,40);
-}
-function bump(){boost=6;clearTimeout(bump.t);bump.t=setTimeout(()=>boost=0,150)}
+function newFile(){const n='untitled-'+(untitled++)+'.py';FILES.push({n,l:'py',text:'',queue:'',off:0,typing:true,dirty:false});activate(FILES.length-1)}
 
-/* ---------- sidebar ---------- */
-let view='explorer';
-function drawSide(){
-  const s=$('side');
-  if(view==='explorer'){
-    s.innerHTML='<h4>EXPLORER</h4><div class="folder">&#9662; PROJECT</div>';
-    FILES.forEach((f,i)=>{const d=document.createElement('div');d.className='file'+(i===active&&open.includes(i)?' on':'');d.textContent=f.n;d.onclick=()=>openFile(i);s.appendChild(d)});
-  }else if(view==='search'){
-    s.innerHTML='<h4>SEARCH</h4><input class="sbox" id="sq" placeholder="Search" aria-label="Search"><div id="sr"></div>';
-    $('sq').oninput=e=>{const q=e.target.value.toLowerCase();const r=$('sr');r.innerHTML='';if(!q)return;let any=false;
-      FILES.forEach((f,i)=>{const c=f.text.toLowerCase().split(q).length-1;if(c||f.n.toLowerCase().includes(q)){any=true;
-        const d=document.createElement('div');d.className='file';d.textContent=f.n+'  ('+c+' matches)';d.onclick=()=>openFile(i);r.appendChild(d)}});
-      if(!any)r.innerHTML='<div class="note">No results found.</div>'};
-    $('sq').focus();
-  }else if(view==='scm'){
-    s.innerHTML='<h4>SOURCE CONTROL</h4><input class="sbox" placeholder="Message (Ctrl+Enter to commit)" id="cm" aria-label="Commit message"><button class="btn" id="cb">Commit</button><div class="folder">Changes</div><div id="ch"></div>';
-    const m=FILES.filter(f=>f.typing&&f.text);const ch=$('ch');
-    if(!m.length)ch.innerHTML='<div class="note">No changes detected.</div>';
-    m.forEach(f=>{const d=document.createElement('div');d.className='file';d.textContent=f.n+'   M';ch.appendChild(d)});
-    $('cb').onclick=()=>{if(!m.length)return toast('Nothing to commit');toast('Committed '+m.length+' file(s) to main');ch.innerHTML='<div class="note">No changes detected.</div>'};
-  }else if(view==='run'){
-    s.innerHTML='<h4>RUN AND DEBUG</h4><button class="btn" id="rb">Run current file</button><div class="note">Runs the open file in the terminal.</div>';
-    $('rb').onclick=runFile;
-  }else{
-    s.innerHTML='<h4>EXTENSIONS</h4>';
-    [['Python','Language support'],['Prettier','Code formatter'],['GitLens','Git supercharged'],['Live Server','Local dev server']].forEach(([n,d],i)=>{
-      const e=document.createElement('div');e.className='ext';e.innerHTML='<div>'+n+'<small>'+d+'</small></div>';
-      const b=document.createElement('button');b.textContent=i===0?'Installed':'Install';if(i===0)b.className='in';
-      b.onclick=()=>{b.textContent='Installing...';setTimeout(()=>{b.textContent='Installed';b.className='in';toast(n+' installed')},900)};
-      e.appendChild(b);s.appendChild(e)});
+/* ---------- realistic typing engine ---------- */
+function typingTick(){
+  const f=cur();
+  if(!f||!f.typing||!open.includes(active)||paused||pushing)return;
+  if(!f.queue){
+    const pool=SN[f.l];
+    f.queue=pool[Math.floor(Math.random()*pool.length)]+'\n';
   }
+  const speed=Math.ceil(Math.random()*$('speed').value*0.5)+boost;
+  for(let s=0;s<speed&&f.queue;s++){
+    if(f.typo){
+      f.text=f.text.slice(0,-1)+f.typo.right;
+      f.typo=null;
+      continue;
+    }
+    const ch=f.queue[0];
+    if(Math.random()<0.04){
+      const wrong=ch===' '?' ':(ch.toUpperCase()===ch?String.fromCharCode(ch.charCodeAt(0)+1):ch.toUpperCase());
+      f.text+=wrong;f.queue=f.queue.slice(1);f.typo={wrong,right:ch};f.dirty=true;setDirty(true);
+      continue;
+    }
+    f.text+=ch;f.queue=f.queue.slice(1);f.dirty=true;setDirty(true);
+  }
+  const ls=f.text.split('\n');
+  if(ls.length>140){const d=ls.length-100;f.off+=d;f.text=ls.slice(d).join('\n')}
+  render();
+  setTimeout(typingTick,40);
 }
-function showView(v){
-  const sd=$('side');
-  if(v===view&&sd.style.display!=='none'){sd.style.display='none';document.querySelectorAll('#act button').forEach(b=>b.classList.remove('on'));return}
-  sd.style.display='';view=v;
-  document.querySelectorAll('#act button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));drawSide();
-}
-document.querySelectorAll('#act button').forEach(b=>b.onclick=()=>showView(b.dataset.v));
 
 /* ---------- terminal ---------- */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -374,6 +351,25 @@ function togglePanel(){$('panel').classList.contains('show')?$('panel').classLis
 async function out(lines,gap){busy=true;for(const l of lines){tprint(l);olog(l);await sleep(gap||260)}busy=false}
 const RUN={py:['Loading config...','Worker started (limit=4)','Processed job 1','Processed job 2','Processed job 3','job 4 failed: timeout','Retrying job 4 (1/3)','Processed job 4','Queue empty. Exiting.'],
 js:['Server listening on http://localhost:3000','GET / 200 4ms','GET /api/items 200 12ms','Cache hit: items','GET /api/items 200 1ms','Received SIGINT, shutting down']};
+
+async function gitPush(){
+  setPushing(true);busy=true;
+  const lines=[
+    PROMPT+' git push origin main',
+    'Enumerating objects: 12, done.',
+    'Counting objects: 100% (12/12), done.',
+    'Compressing objects: 100% (8/8), done.',
+    'Writing objects: 100% (12/12), 1.84 KiB | 2.40 MiB/s, done.',
+    'Total 12 (delta 3), reused 0 (delta 0), pack-reused 0',
+    'remote: Resolving deltas: 100% (3/3), completed with 3 local objects.',
+    'To github.com/devuser/project.git',
+    '   a41f9c2..7be03d1  main -> main',
+    'Branch \'main\' set up to track remote branch \'main\' from \'origin\'.'
+  ];
+  for(const l of lines){tprint(l);olog(l);await sleep(180+Math.random()*400);}
+  setPushing(false);busy=false;setDirty(false);
+}
+
 async function exec(cmd){
   tprint(PROMPT+' '+cmd,'pr');cmd=cmd.trim();if(!cmd)return;
   const [c,...a]=cmd.split(/\s+/);const arg=a.join(' ');
@@ -382,8 +378,8 @@ async function exec(cmd){
     if(!f||!f.typing)return tprint((c==='node'?'Error: Cannot find module ':'python: can’t open file ')+"'"+runner+"'");
     olog('[Running] '+cmd);return out([...RUN[f.l],'[Done] exited with code=0']);}
   switch(c){
-    case 'help':return tprint('Commands: ls, cat <file>, pwd, whoami, date, echo, clear, git status, git log, python <file>, node <file>, npm start, exit');
-    case 'ls':return tprint(FILES.map(f=>f.n).join('  '));
+    case 'help':return tprint('Commands: ls, cat <file>, pwd, whoami, date, echo, clear, git status, git log, git push, git commit, python <file>, node <file>, npm start, exit');
+    case 'ls':return tprint(FILES.map(f=>f.n+(f.dirty?' *':'')).join('  '));
     case 'pwd':return tprint('/home/dev/project');
     case 'whoami':return tprint('dev');
     case 'date':return tprint(new Date().toString());
@@ -392,8 +388,10 @@ async function exec(cmd){
     case 'exit':$('panel').classList.remove('show');return;
     case 'cat':{const f=FILES.find(x=>x.n===arg);return tprint(f?f.text.split('\n').slice(0,14).join('\n'):'cat: '+arg+': No such file or directory')}
     case 'git':
-      if(arg==='status'){const m=FILES.filter(f=>f.typing&&f.text);return tprint('On branch main\n'+(m.length?'Changes not staged for commit:\n'+m.map(f=>'        modified:   '+f.n).join('\n'):'nothing to commit, working tree clean'))}
-      if(arg==='log')return tprint('commit a41f9c2 (HEAD -> main)\n    add worker retry logic\n\ncommit 7be03d1\n    initial commit');
+      if(arg==='status'){const m=FILES.filter(f=>f.typing&&f.dirty);return tprint('On branch main\nYour branch is up to date with \'origin/main\'.\n'+(m.length?'Changes not staged for commit:\n'+m.map(f=>'        modified:   '+f.n).join('\n'):'nothing to commit, working tree clean'))}
+      if(arg==='log')return tprint('commit 7be03d1 (HEAD -> main, origin/main)\n    Initial project structure\n\ncommit a41f9c2\n    Add worker retry logic\n\ncommit 3c9f1a2\n    Initial commit');
+      if(arg==='push'){if(busy)return tprint('Already running a command.');return gitPush();}
+      if(arg==='commit'){const m=FILES.filter(f=>f.typing&&f.dirty);if(!m.length)return tprint('nothing to commit, working tree clean');tprint('[master 7be03d1] Auto-save checkpoint');m.forEach(f=>{f.dirty=false;setDirty(false);});toast('Committed '+m.length+' file(s)');return;}
       return tprint('git: unsupported in this demo');
     case 'node':return tprint('v20.11.0');
     case 'python':case 'python3':return tprint('Python 3.12.1');
@@ -416,21 +414,29 @@ function runFile(){
   showPanel('term');exec((f.l==='py'?'python ':'node ')+f.n);
 }
 
+/* ---------- scm auto commit ---------- */
+function scmAutoCommit(){
+  const m=FILES.filter(f=>f.typing&&f.dirty);
+  if(m.length&&Math.random()<0.02){tprint('[auto-commit] checkpoint '+m.map(f=>f.n).join(', '));m.forEach(f=>{f.dirty=false;setDirty(false);});toast('Auto-committed '+m.length+' file(s)');}
+}
+
 /* ---------- menus & commands ---------- */
 const A={
   term:togglePanel,newTerm:()=>{showPanel('term');$('tin').focus()},clearTerm:()=>{$('tout').innerHTML='';showPanel('term')},
   side:()=>showView(view),mini:()=>{minimap=!minimap;render()},
   theme:()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'},
   pause:()=>{paused=!paused;$('pause').textContent=paused?'Resume':'Pause'},
-  lang:()=>{const f=cur();if(!f||!f.typing)return toast('Language switch works on code files');f.l=f.l==='py'?'js':'py';f.text='';f.queue='';f.off=0;chrome();render()},
-  save:()=>cur()&&open.includes(active)?toast('Saved '+cur().n):toast('Nothing to save'),
-  clear:()=>{const f=cur();if(f&&f.typing){f.text='';f.queue='';f.off=0;render()}},
+  lang:()=>{const f=cur();if(!f||!f.typing)return toast('Language switch works on code files');f.l=f.l==='py'?'js':'py';f.text='';f.queue='';f.off=0;f.dirty=false;setDirty(false);chrome();render()},
+  save:()=>cur()&&open.includes(active)?(cur().dirty=false,setDirty(false),toast('Saved '+cur().n)):toast('Nothing to save'),
+  clear:()=>{const f=cur();if(f&&f.typing){f.text='';f.queue='';f.off=0;f.dirty=false;setDirty(false);render()}},
   selall:()=>{if(!open.includes(active))return;hold=Date.now()+5000;const r=document.createRange();r.selectNodeContents($('code'));const s=getSelection();s.removeAllRanges();s.addRange(r)},
   next:()=>{if(open.length){activate(open[(open.indexOf(active)+1)%open.length])}},
   prev:()=>{if(open.length){activate(open[(open.indexOf(active)-1+open.length)%open.length])}},
   about:()=>toast('Code Typer: a VS Code look-alike that codes by itself'),
   run:runFile,close:()=>open.includes(active)&&closeTab(active),
-  pal:()=>openPalette('>'),goto:()=>openPalette('')
+  pal:()=>openPalette('>'),goto:()=>openPalette(''),
+  push:()=>{if(busy)return toast('Already running...');showPanel('term');gitPush();},
+  commit:()=>{const m=FILES.filter(f=>f.typing&&f.dirty);if(!m.length)return toast('Nothing to commit');tprint('[master 7be03d1] Auto-save checkpoint');m.forEach(f=>{f.dirty=false;setDirty(false);});toast('Committed '+m.length+' file(s)');showPanel('term')}
 };
 const MENUS={
   File:[['New File','',newFile],['Save','',A.save],['Close Editor','',A.close]],
@@ -439,7 +445,7 @@ const MENUS={
   View:[['Command Palette...','Ctrl+Shift+P',A.pal],'-',['Explorer','',()=>showView('explorer')],['Search','',()=>showView('search')],['Source Control','',()=>showView('scm')],['Run and Debug','',()=>showView('run')],['Extensions','',()=>showView('ext')],'-',['Toggle Terminal','Ctrl+`',A.term],['Toggle Sidebar','Ctrl+B',A.side],['Toggle Minimap','',A.mini],['Toggle Color Theme','',A.theme]],
   Go:[['Go to File...','Ctrl+P',A.goto],['Next Editor','',A.next],['Previous Editor','',A.prev]],
   Run:[['Run Current File','',A.run],['Pause or Resume Typing','',A.pause]],
-  Terminal:[['New Terminal','',A.newTerm],['Clear Terminal','',A.clearTerm],['Toggle Terminal','Ctrl+`',A.term]],
+  Terminal:[['New Terminal','',A.newTerm],['Clear Terminal','',A.clearTerm],['Toggle Terminal','Ctrl+`',A.term],['Git Push','',A.push]],
   Help:[['About','',A.about],['Command Palette...','Ctrl+Shift+P',A.pal]]
 };
 let menuOpen=false;
@@ -455,7 +461,7 @@ Object.keys(MENUS).forEach(k=>{
   $('menu').appendChild(w)});
 document.addEventListener('click',()=>closeMenus());
 
-const CMDS=[['Toggle Terminal','Ctrl+`',A.term],['Create New Terminal','',A.newTerm],['Clear Terminal','',A.clearTerm],['Run Current File','',A.run],['Toggle Sidebar','Ctrl+B',A.side],['Toggle Minimap','',A.mini],['Toggle Color Theme','',A.theme],['Switch Language (Python/JavaScript)','',A.lang],['Pause or Resume Typing','',A.pause],['New File','',newFile],['Close Editor','',A.close],['Show Explorer','',()=>showView('explorer')],['Show Search','',()=>showView('search')],['Show Source Control','',()=>showView('scm')],['Show Extensions','',()=>showView('ext')],['About','',A.about]];
+const CMDS=[['Toggle Terminal','Ctrl+`',A.term],['Create New Terminal','',A.newTerm],['Clear Terminal','',A.clearTerm],['Run Current File','',A.run],['Git Push','',A.push],['Git Commit','',A.commit],['Toggle Sidebar','Ctrl+B',A.side],['Toggle Minimap','',A.mini],['Toggle Color Theme','',A.theme],['Switch Language (Python/JavaScript)','',A.lang],['Pause or Resume Typing','',A.pause],['New File','',newFile],['Close Editor','',A.close],['Show Explorer','',()=>showView('explorer')],['Show Search','',()=>showView('search')],['Show Source Control','',()=>showView('scm')],['Show Extensions','',()=>showView('ext')],['About','',A.about]];
 function openPalette(p){$('pal').style.display='flex';$('pin').value=p||'';palList();$('pin').focus()}
 function closePalette(){$('pal').style.display='none'}
 function palList(){
@@ -477,21 +483,63 @@ $('pin').addEventListener('keydown',e=>{
 $('pal').onclick=e=>{if(e.target===$('pal'))closePalette()};
 $('burger').onclick=()=>openPalette('>');
 
+/* ---------- sidebar ---------- */
+let view='explorer';
+function drawSide(){
+  const s=$('side');
+  if(view==='explorer'){
+    s.innerHTML='<h4>EXPLORER</h4><div class="folder">&#9662; PROJECT</div>';
+    FILES.forEach((f,i)=>{const d=document.createElement('div');d.className='file'+(i===active&&open.includes(i)?' on':(f.dirty?' modified':''));d.textContent=f.n+(f.dirty?'   M':'');d.onclick=()=>openFile(i);s.appendChild(d)});
+  }else if(view==='search'){
+    s.innerHTML='<h4>SEARCH</h4><input class="sbox" id="sq" placeholder="Search" aria-label="Search"><div id="sr"></div>';
+    $('sq').oninput=e=>{const q=e.target.value.toLowerCase();const r=$('sr');r.innerHTML='';if(!q)return;let any=false;
+      FILES.forEach((f,i)=>{const c=f.text.toLowerCase().split(q).length-1;if(c||f.n.toLowerCase().includes(q)){any=true;
+        const d=document.createElement('div');d.className='file';d.textContent=f.n+'  ('+c+' matches)';d.onclick=()=>openFile(i);r.appendChild(d)}});
+      if(!any)r.innerHTML='<div class="note">No results found.</div>'};
+    $('sq').focus();
+  }else if(view==='scm'){
+    s.innerHTML='<h4>SOURCE CONTROL</h4><input class="sbox" placeholder="Message (Ctrl+Enter to commit)" id="cm" aria-label="Commit message"><button class="btn" id="cb">Commit</button><div class="folder">Changes</div><div id="ch"></div>';
+    const m=FILES.filter(f=>f.typing&&f.dirty);const ch=$('ch');
+    if(!m.length)ch.innerHTML='<div class="note">No changes detected.</div>';
+    m.forEach(f=>{const d=document.createElement('div');d.className='file';d.textContent=f.n+'   M';ch.appendChild(d)});
+    $('cb').onclick=A.commit;
+    $('cm').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();A.commit();}});
+  }else if(view==='run'){
+    s.innerHTML='<h4>RUN AND DEBUG</h4><button class="btn" id="rb">Run current file</button><div class="note">Runs the open file in the terminal.</div>';
+    $('rb').onclick=runFile;
+  }else{
+    s.innerHTML='<h4>EXTENSIONS</h4>';
+    [['Python','Language support'],['Prettier','Code formatter'],['GitLens','Git supercharged'],['Live Server','Local dev server']].forEach(([n,d],i)=>{
+      const e=document.createElement('div');e.className='ext';e.innerHTML='<div>'+n+'<small>'+d+'</small></div>';
+      const b=document.createElement('button');b.textContent=i===0?'Installed':'Install';if(i===0)b.className='in';
+      b.onclick=()=>{b.textContent='Installing...';setTimeout(()=>{b.textContent='Installed';b.className='in';toast(n+' installed')},900)};
+      e.appendChild(b);s.appendChild(e)});
+  }
+}
+function showView(v){
+  const sd=$('side');
+  if(v===view&&sd.style.display!=='none'){sd.style.display='none';document.querySelectorAll('#act button').forEach(b=>b.classList.remove('on'));return}
+  sd.style.display='';view=v;
+  document.querySelectorAll('#act button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));drawSide();
+}
+document.querySelectorAll('#act button').forEach(b=>b.onclick=()=>showView(b.dataset.v));
+
 /* ---------- status bar & keys ---------- */
 $('pause').onclick=A.pause;$('lang').onclick=A.lang;$('tbtn').onclick=A.term;
-$('scroll').addEventListener('click',bump);
+$('scroll').addEventListener('click',()=>{boost=6;clearTimeout(boost.t);boost.t=setTimeout(()=>boost=0,150)});
 document.addEventListener('keydown',e=>{
   const m=e.ctrlKey||e.metaKey,k=e.key.toLowerCase();
   if((m&&e.shiftKey&&k==='p')||e.key==='F1'){e.preventDefault();return openPalette('>')}
   if(m&&k==='p'){e.preventDefault();return openPalette('')}
-  if(m&&e.key==='`'){e.preventDefault();return A.term()}
+  if(m&&k==='`'){e.preventDefault();return A.term()}
   if(m&&k==='b'){e.preventDefault();return A.side()}
   if(e.key==='Escape'){closeMenus();return}
   if(e.target.matches('input,textarea'))return;
-  bump();
+  boost=6;clearTimeout(boost.t);boost.t=setTimeout(()=>boost=0,150);
 });
 if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';
-prefill(FILES[0]);drawSide();chrome();render();tick();
+prefill(FILES[0]);drawSide();chrome();render();typingTick();
+setInterval(scmAutoCommit,4000);
 </script>
 </body>
 </html>
